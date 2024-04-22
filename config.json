@@ -1,0 +1,8 @@
+{
+    "dev-host": "https://unify.apideck.com",
+    "qa-host": "",
+    "test-host": "https://unify.apideck.com",
+    "staging-host": "https://unify.apideck.com",
+    "environment": "development"
+  }
+  

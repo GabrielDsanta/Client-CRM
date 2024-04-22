@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    webkit-font-smoothing: antialiased;
+    background-color: #121214;
+}
+
+body, input, textarea, button {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 400;
+}
