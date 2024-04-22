@@ -1,10 +1,14 @@
 import { ListDashes, UserCirclePlus } from "@phosphor-icons/react";
 import { useState } from "react";
+import { useRouter } from "next/router";
 
 import Link from "next/link";
 
 export function AsideBar() {
-  const [currentScreen, setCurrentScreen] = useState<String>('/');
+  const router = useRouter();
+  const { pathname } = router;
+  
+  const [currentScreen, setCurrentScreen] = useState<String>(pathname);
 
   const navigationLinks = [
     {
@@ -13,10 +17,10 @@ export function AsideBar() {
       icon: <ListDashes size={24} color="#3a3541" />,
     },
     {
-        path: "/register",
-        title: "Cadastro",
-        icon: <UserCirclePlus size={24} color="#3a3541" />,
-      },
+      path: "/register",
+      title: "Cadastro",
+      icon: <UserCirclePlus size={24} color="#3a3541" />,
+    },
   ];
 
   return (
