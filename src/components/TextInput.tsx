@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useMediaQuery } from "react-responsive";
 
 interface TextInputProps {
   errorMessage?: string;
@@ -8,6 +9,8 @@ export function TextInput({
   errorMessage,
   ...props
 }: TextInputProps & React.InputHTMLAttributes<HTMLInputElement>) {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+
   const [isFocused, setIsFocused] = useState(false);
 
   return (
@@ -19,7 +22,7 @@ export function TextInput({
           isFocused
             ? "border-[#77ABA9] border-[2px]"
             : "border-[rgba(255,255,255, 1)]"
-        }`}
+        } ${isMobile && 'w-full'}`}
       >
         <input
           placeholder="Nome do cliente"
@@ -32,7 +35,7 @@ export function TextInput({
           type="text"
         />
       </div>
-      {errorMessage && <h3 className="text-[#FF4C51] mb-5">{errorMessage}</h3>}
+      {errorMessage && <h3 className="text-[#FF4C51] mb-5 text-start">{errorMessage}</h3>}
     </>
   );
 }

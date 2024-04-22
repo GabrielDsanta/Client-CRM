@@ -1,14 +1,12 @@
-import "react-responsive-modal/styles.css";
-
 import { useEffect, useState } from "react";
 import { Client } from "../models/Client";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { TextInput } from "./TextInput";
-import { Toaster, toast } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { useClient } from "../hooks/useClient";
-
-import Modal from "react-responsive-modal";
+import { DeleteClientModal } from "./DeleteClientModal";
+import { UpdateClientModal } from "./UpdateClientModal";
+import { useMediaQuery } from "react-responsive";
 
 import * as yup from "yup";
 
@@ -38,6 +36,8 @@ export function ClientCard({ client }: ClientCardProps) {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
 
   const onOpenUpdateModal = () => setIsUpdateModalOpen(true);
   const onCloseUpdateModal = () => setIsUpdateModalOpen(false);
@@ -131,130 +131,81 @@ export function ClientCard({ client }: ClientCardProps) {
   }, [isLoading]);
 
   return (
-    <div className="w-full px-6 h-16 flex items-center border-b-[1px] border-[rgba(231, 230, 232, 1)]">
-      <h4 className="font-bold text-gray-600 w-[25%] mr-3 text-sm">{name}</h4>
-      <h4 className="font-bold text-gray-600 w-[25%] mr-3 text-sm">
+    <div
+      className={`w-full px-6 h-16 flex items-center border-b-[1px] border-[rgba(231, 230, 232, 1)] ${
+        isMobile &&
+        "flex-col h-auto border-[1px] border-[rgba(231, 230, 232, 1)] p-3 w-full mb-5 rounded-lg px-3"
+      }`}
+    >
+      <h4
+        className={`font-bold text-gray-600 w-[25%] mr-3 text-sm ${
+          isMobile && "w-full mb-1"
+        }`}
+      >
+        {isMobile && "Nome: "}
+        {name}
+      </h4>
+      <h4
+        className={`font-bold text-gray-600 w-[25%] mr-3 text-sm ${
+          isMobile && "w-full mb-1"
+        }`}
+      >
+        {isMobile && "Sobrenome: "}
         {last_name}
       </h4>
-      <h4 className="font-bold text-gray-600 w-[25%] mr-3 text-sm">
+      <h4
+        className={`font-bold text-gray-600 w-[25%] mr-3 text-sm ${
+          isMobile && "w-full mb-1"
+        }`}
+      >
+        {isMobile && "E-mail: "}
         {emails[0]?.email}
       </h4>
-      <h4 className="font-bold text-gray-600 w-[25%] mr-3 text-sm">
+      <h4
+        className={`font-bold text-gray-600 w-[25%] mr-3 text-sm ${
+          isMobile && "w-full mb-1"
+        }`}
+      >
+        {isMobile && "Telefone: "}
         {phone_numbers[0]?.number}
       </h4>
-      <div className="flex items-center gap-3 w-[25%]">
+      <div
+        className={`flex items-center gap-3 w-[25%] ${
+          isMobile && "w-full flex-col"
+        }`}
+      >
         <button
           onClick={onOpenUpdateModal}
-          className="w-16 h-8 border-[1px] border-[#16B1FF] rounded-md text-[#16B1FF] text-xs font-semibold"
+          className={`w-16 h-8 border-[1px] border-[#16B1FF] rounded-md text-[#16B1FF] text-xs font-semibold ${
+            isMobile && "w-full mt-4"
+          }`}
         >
           Editar
         </button>
         <button
           onClick={onOpenDeleteModal}
-          className="w-16 h-8 border-[1px] border-[#FF4C51] rounded-md text-[#FF4C51] text-xs font-semibold"
+          className={`w-16 h-8 border-[1px] border-[#FF4C51] rounded-md text-[#FF4C51] text-xs font-semibold ${
+            isMobile && "w-full mt-2"
+          }`}
         >
           Excluir
         </button>
       </div>
 
-      <Modal
-        styles={{
-          modal: {
-            width: "100%",
-            borderRadius: 10,
-          },
-        }}
-        showCloseIcon={false}
-        open={isUpdateModalOpen}
-        onClose={onCloseUpdateModal}
-        center
-      >
-        <div className="w-full flex flex-col items-center">
-          <h1 className="font-semibold text-gray-600 text-xl mb-6">
-            Editar Cliente
-          </h1>
-          <TextInput
-            errorMessage={errors.name?.message}
-            defaultValue={getValues("name")}
-            onChange={(e) => setValue("name", e.target.value)}
-            placeholder="Nome"
-          />
+      <UpdateClientModal
+        client={client}
+        onCloseUpdateModal={onCloseUpdateModal}
+        isUpdateModalOpen={isUpdateModalOpen}
+        isLoading={isLoading}
+        handleSubmitForm={handleSubmitForm}
+      />
 
-          <TextInput
-            errorMessage={errors.surName?.message}
-            defaultValue={getValues("surName")}
-            onChange={(e) => setValue("surName", e.target.value)}
-            placeholder="Sobrenome"
-          />
-
-          <TextInput
-            errorMessage={errors.email?.message}
-            defaultValue={getValues("email")}
-            onChange={(e) => setValue("email", e.target.value)}
-            placeholder="E-mail"
-          />
-
-          <TextInput
-            errorMessage={errors.phone?.message}
-            defaultValue={getValues("phone")}
-            onChange={(e) => setValue("phone", e.target.value)}
-            placeholder="Telefone"
-          />
-
-          <div className="w-full flex items-center justify-end mr-7 gap-5">
-            <button
-              onClick={onCloseUpdateModal}
-              className="w-24 h-9 border-[1px] border-[#FFB400] rounded-md text-[#FFB400] text-sm font-semibold"
-            >
-              Cancelar
-            </button>
-            <button
-              disabled={isLoading}
-              onClick={handleSubmit(handleSubmitForm)}
-              className="w-24 h-9 border-[1px] border-[#77ABA9] rounded-md text-[#77ABA9] text-sm font-semibold"
-            >
-              Salvar
-            </button>
-          </div>
-        </div>
-      </Modal>
-
-      <Modal
-        styles={{
-          modal: {
-            width: "35%",
-            borderRadius: 10,
-          },
-        }}
-        showCloseIcon={false}
-        open={isDeleteModalOpen}
-        onClose={onCloseDeleteModal}
-        center
-      >
-        <div className="w-full flex flex-col items-center pb-3">
-          <h1 className="font-semibold text-gray-600 text-xl mb-6">
-            Deseja excluir esse cliente ?
-          </h1>
-
-          <div className="w-full flex items-center justify-center mr-7 gap-5">
-            <button
-              onClick={handleDeleteClient}
-              className="w-36 h-10 border-[1px] border-[#FF4C51] rounded-md text-[#FF4C51] text-sm font-semibold"
-            >
-              Sim
-            </button>
-            <button
-              disabled={isLoading}
-              onClick={onCloseDeleteModal}
-              className="w-36 h-10 border-[1px] border-[#77ABA9] rounded-md text-[#77ABA9] text-sm font-semibold"
-            >
-              Não
-            </button>
-          </div>
-        </div>
-      </Modal>
-
-      <Toaster position="top-center" reverseOrder={false} />
+      <DeleteClientModal
+        onCloseDeleteModal={onCloseDeleteModal}
+        isLoading={isLoading}
+        isDeleteModalOpen={isDeleteModalOpen}
+        handleDeleteClient={handleDeleteClient}
+      />
     </div>
   );
 }
